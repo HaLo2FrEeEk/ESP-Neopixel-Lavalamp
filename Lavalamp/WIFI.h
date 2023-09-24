@@ -6,8 +6,8 @@
 //
 void setupWifi();
 
-const char* ssid = "SSID";
-const char* pass = "PASS";
+const char* ssid = "";
+const char* pass = "";
 bool wifiSetup = false;
 char chipId[10];
 char hostname[32];
@@ -34,16 +34,24 @@ void setupWifi() {
     Serial.println(chipId);
     Serial.print("Hostname: ");
     Serial.println(hostname);
+  #elif defined(DEBUG_OUT)
+    //
   #endif
 
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(hostname);
   WiFi.begin(ssid, pass);
+  uint8_t retry = 0;
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    if(retry >= 3) ESP.restart();
+    delay(5000);
+    retry++;
     
     #ifdef DEBUG
-      Serial.print(".");
+      Serial.print("Attempt ");
+      Serial.println(retry);
+    #elif defined(DEBUG_OUT)
+      //
     #endif
   }
 
@@ -51,11 +59,13 @@ void setupWifi() {
   WiFi.persistent(true);
 
   #ifdef DEBUG
-    Serial.println();
+    // Serial.println();
     Serial.println("Wifi Connected");
     Serial.print("IP: ");
     Serial.println(WiFi.localIP());
     Serial.println();
+  #elif defined(DEBUG_OUT)
+    //
   #endif
 
   wifiSetup = true;
