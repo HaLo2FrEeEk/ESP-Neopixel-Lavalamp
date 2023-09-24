@@ -27,8 +27,7 @@ char* localizeTopic(const char*);
 #include <PubSubClient.h>
 WiFiClient espClient;
 PubSubClient client(espClient);
-
-const char* mqtt_server = "BROKER";
+const char* mqtt_server = "192.168.***.***";
 char msg[128];
 char topic[64];
 uint8_t numTopics;
@@ -57,21 +56,12 @@ void reconnect() {
     if (client.connect(chipId, localizeTopic(MQTT_HeartbeatTopic), 0, false, MQTT_Disconnected)) {
       heartbeat();
 
-      #ifdef DEBUG
-        Serial.println("Subscribing to topics:");
-      #endif
       for(uint8_t i = 0; i < numTopics; i++) {
         if(Topics[i].local) {
           client.subscribe(localizeTopic(Topics[i].topic));
-          #ifdef DEBUG
-            Serial.println(localizeTopic(Topics[i].topic));
-          #endif
         }
         if(Topics[i].global) {
           client.subscribe(Topics[i].topic);
-          #ifdef DEBUG
-            Serial.println(Topics[i].topic);
-          #endif
         }
       }
     } else {
@@ -103,25 +93,12 @@ void setupMQTT() {
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   numTopics = sizeof(Topics) / sizeof(MQTT_TopicHandler);
-  
-  #ifdef DEBUG
-    Serial.println("Starting MQTT...");
-  #endif
-
   loopMQTT();
 }
 
 void loopMQTT() {
   if(!client.connected()) {  
-    #ifdef DEBUG
-      Serial.println("Connecting MQTT...");
-    #endif
-
     reconnect();
-    
-    #ifdef DEBUG
-      Serial.println("MQTT Connected\n");
-    #endif
   }
 
   client.loop();
