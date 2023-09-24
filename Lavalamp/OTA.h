@@ -17,11 +17,6 @@ void setupOTA() {
   if(!wifiSetup) setupWifi();
   ArduinoOTA.setHostname(hostname);
   ArduinoOTA.begin();
-  
-  #ifdef DEBUG
-    Serial.println("OTA Started");
-    Serial.println();
-  #endif
 }
 
 void loopOTA() {
