@@ -27,16 +27,6 @@ void setupWifi() {
     sprintf(chipId, "%08X", ESP.getEfuseMac());
   #endif
   sprintf(hostname, "%s-%s", name, chipId);
-  
-  #ifdef DEBUG
-    Serial.println("Connecting Wifi...");
-    Serial.print("chipId: ");
-    Serial.println(chipId);
-    Serial.print("Hostname: ");
-    Serial.println(hostname);
-  #elif defined(DEBUG_OUT)
-    //
-  #endif
 
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(hostname);
@@ -46,28 +36,10 @@ void setupWifi() {
     if(retry >= 3) ESP.restart();
     delay(5000);
     retry++;
-    
-    #ifdef DEBUG
-      Serial.print("Attempt ");
-      Serial.println(retry);
-    #elif defined(DEBUG_OUT)
-      //
-    #endif
   }
 
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
-
-  #ifdef DEBUG
-    // Serial.println();
-    Serial.println("Wifi Connected");
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
-    Serial.println();
-  #elif defined(DEBUG_OUT)
-    //
-  #endif
-
   wifiSetup = true;
 }
 
